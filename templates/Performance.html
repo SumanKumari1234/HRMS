@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Performance Chart</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    canvas {
+        max-width: 100%;
+    }
+    .dropdown {
+        margin-bottom: 20px;
+    }
+    .dropdown select {
+        padding: 8px;
+        font-size: 16px;
+    }
+    .chart-container {
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Employee Performance Chart</h1>
+    <div class="dropdown">
+        <select id="departmentSelect" onchange="updateEmployees()">
+            <option value="-1">Select Department</option>
+            <option value="0">Engineering</option>
+            <option value="1">Marketing</option>
+            <option value="2">Sales</option>
+            <option value="3">Human Resources</option>
+        </select>
+    </div>
+    <div class="dropdown" id="employeeDropdown" style="display: none;">
+        <select id="employeeSelect" onchange="updateCharts()">
+            <option value="-1">Select Employee</option>
+        </select>
+    </div>
+    <div id="chartsContainer">
+        <div id="performanceChartContainer" class="chart-container">
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Sample data
+    const departments = [
+        {
+            name: 'Engineering',
+            employees: [
+                { name: 'ironman',skills: 80, attendance: 90, projects: 5 },
+                { name: 'thor', skills: 70, attendance: 95, projects: 7 }
+            ]
+        },
+        {
+            name: 'Marketing',
+            employees: [
+                { name: 'sravan', skills: 85, attendance: 80, projects: 4 },
+                { name: 'ravichandar', skills: 75, attendance: 90, projects: 6 }
+            ]
+        },
+        {
+            name: 'Sales',
+            employees: [
+                { name: 'aswini', skills: 75, attendance: 85, projects: 3 },
+                { name: 'tejasree', skills: 90, attendance: 85, projects: 8 }
+            ]
+        },
+        {
+            name: 'Human Resources',
+            employees: [
+                { name: 'bobby',skills: 85, attendance: 95, projects: 6 },
+                { name: 'bunty', skills: 80, attendance: 90, projects: 5 }
+            ]
+        }
+    ];
+
+    // Function to update employee dropdown based on selected department
+    function updateEmployees() {
+        const selectedIndex = document.getElementById('departmentSelect').value;
+        const employeeDropdown = document.getElementById('employeeSelect');
+        employeeDropdown.innerHTML = '<option value="-1">Select Employee</option>';
+        if (selectedIndex != -1) {
+            departments[selectedIndex].employees.forEach((employee, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = employee.name;
+                employeeDropdown.appendChild(option);
+            });
+            document.getElementById('employeeDropdown').style.display = 'block';
+        } else {
+            document.getElementById('employeeDropdown').style.display = 'none';
+        }
+        // Hide chart containers when department changes
+        const chartContainers = document.querySelectorAll('.chart-container');
+        chartContainers.forEach(container => {
+            container.style.display = 'none';
+        });
+    }
+
+    // Chart configuration
+    const performanceData = {
+        labels: [],
+        datasets: [
+            {
+                label: 'Skills',
+                data: [],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                yAxisID: 'y-axis-skills'
+            },
+            {
+                label: 'Attendance',
+                data: [],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                yAxisID: 'y-axis-attendance'
+            },
+            {
+                label: 'Projects Done',
+                data: [],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                type: 'bar',
+                yAxisID: 'y-axis-projects'
+            }
+        ]
+    };
+
+    // Render chart
+    const performanceChartCtx = document.getElementById('performanceChart').getContext('2d');
+    const performanceChart = new Chart(performanceChartCtx, {
+        type: 'bar',
+        data: performanceData,
+        options: {
+            scales: {
+                yAxes: [
+                    {
+                        id: 'y-axis-skills',
+                        type: 'linear',
+                        position: 'left',
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 10,
+                            max: 100
+                        }
+                    },
+                    {
+                        id: 'y-axis-attendance',
+                        type: 'linear',
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 10,
+                            max: 100
+                        }
+                    },
+                    {
+                        id: 'y-axis-projects',
+                        type: 'linear',
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    }
+                ]
+            }
+        }
+    });
+
+    // Function to update chart based on selected employee
+    function updateCharts() {
+        const departmentIndex = document.getElementById('departmentSelect').value;
+        const employeeIndex = document.getElementById('employeeSelect').value;
+        if (departmentIndex != -1 && employeeIndex != -1) {
+            const employee = departments[departmentIndex].employees[employeeIndex];
+            performanceChart.data.labels = [employee.name];
+            performanceChart.data.datasets[0].data = [employee.skills];
+            performanceChart.data.datasets[1].data = [employee.attendance];
+            performanceChart.data.datasets[2].data = [employee.projects];
+            performanceChart.update();
+            // Show chart containers
+            const chartContainers = document.querySelectorAll('.chart-container');
+            chartContainers.forEach(container => {
+                container.style.display = 'block';
+            });
+        }
+    }
+</script>
+</body>
+</html>

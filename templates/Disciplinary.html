@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disciplinary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .form-field {
+            margin-bottom: 15px;
+        }
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-field input, .form-field textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-field textarea {
+            resize: vertical;
+        }
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Contact Us</h2>
+        <form action="../insertdisciplinary/" method="post">
+            {% csrf_token %}
+            <div class="form-field">
+                <label for="name">Employee Name</label>
+                <input type="text" id="name" name="employee_name" required>
+            </div>
+            <div class="form-field">
+                <label for="employeecode">Employee Code</label>
+                <input type="text" id="email" name="employee_code" required>
+            </div>
+            <div class="form-field">
+                <label for="disciplinaryactipon">Disciplinary Action</label>
+                <input type="text" id="phone" name="disciplinary_action" required>
+            </div>
+            <div class="form-field">
+                <label for="dateofaction">Date of Action</label>
+                <input type="date" id="address" name="date_of_action" required>
+            </div>
+            <div class="form-field">
+                <label for="disciplinarynotes">Disciplinary Notes</label>
+                <textarea id="textarea" name="disciplinary_notes" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>

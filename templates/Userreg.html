@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Application Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .header {
+            background-color: #7386D5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+
+        .success-message {
+            color: green;
+            text-align: center;
+            display: none;
+        }
+
+        .leave-dropdown, .designation-dropdown, .department-dropdown {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .option {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background-color: #f2f2f2;
+        }
+
+        .center-bottom {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .required-star::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+        }
+
+        button {
+            width: 120px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="header">
+            <h2>Leave Request</h2>
+        </div>
+        <form id="form" name="register" method="post" action="../insertuser/" onsubmit="return validateForm()" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <br><br>
+            <div class="form-group row">
+                <label for="empid" class="col-sm-2 col-form-label required-star">ID</label>
+                <div class="col-sm-4">
+                    <input type="text" name="empid" id="empid" class="form-control" placeholder="eg:- MSDS22R013" required>
+                    <div class="error-message" id="empidError">Please fill this field</div>
+                </div>
+                <label for="empname" class="col-sm-2 col-form-label required-star">First Name</label>
+                <div class="col-sm-4">
+                    <input type="text" name="empname" id="empname" class="form-control" placeholder="eg:- Sravan" required>
+                    <div class="error-message" id="empnameError">Please fill this field</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="emplastname" class="col-sm-2 col-form-label required-star">Last Name</label>
+                <div class="col-sm-4">
+                    <input type="text" name="emplastname" id="emplastname" class="form-control" placeholder="eg:- Kumar / K" required>
+                    <div class="error-message" id="emplastnameError">Please fill this field</div>
+                </div>
+                <label for="empdepartment" class="col-sm-2 col-form-label required-star">Department</label>
+                <div class="col-sm-4">
+                    <div style="position: relative;">
+                        <input type="text" name="empdepartment" id="empdepartment" class="form-control" placeholder="Select an option" onclick="toggledepartmentOptions()" required>
+                        <div id="departmentDropdown" class="department-dropdown">
+                            <div class="option" onclick="selectdepartment('IT')">IT- Department</div>
+                            <div class="option" onclick="selectdepartment('HR')">HR-Department</div>
+                            <div class="option" onclick="selectdepartment('Datascience')">Datascience- Department</div>
+                        </div>
+                        <span class="arrow">&#9660;</span> <!-- Downward arrow -->
+                    </div>
+                    <div class="error-message" id="empdepartmentError">Please fill this field</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="empdesignation" class="col-sm-2 col-form-label required-star">Designation</label>
+                <div class="col-sm-4">
+                    <div style="position: relative;">
+                        <input type="text" name="empdesignation" id="empdesignation" class="form-control" placeholder="Select an option" onclick="toggledesignationOptions()" required>
+                        <div id="designationDropdown" class="designation-dropdown">
+                            <div class="option" onclick="selectdesignation('Analyst')">Analyst</div>
+                            <div class="option" onclick="selectdesignation('Engineer')">Engineer</div>
+                            <div class="option" onclick="selectdesignation('Employee')">Employee</div>
+                        </div>
+                        <span class="arrow">&#9660;</span> <!-- Downward arrow -->
+                    </div>
+                    <div class="error-message" id="empdesignationError">Please fill this field</div>
+                </div>
+                <label for="typeofleave" class="col-sm-2 col-form-label required-star">Leave Type</label>
+                <div class="col-sm-4">
+                    <div style="position: relative;">
+                        <input type="text" name="typeofleave" id="leaveTypeInput" class="form-control" placeholder="Select an option" onclick="toggleLeaveOptions()" required>
+                        <div id="leaveTypeDropdown" class="leave-dropdown">
+                            <div class="option" onclick="selectLeaveType('Vacation')">Vacation</div>
+                            <div class="option" onclick="selectLeaveType('Sick')">Sick</div>
+                            <div class="option" onclick="selectLeaveType('Personal')">Personal</div>
+                            <div class="option" onclick="selectLeaveType('Maternity')">Maternity</div>
+                            <div class="option" onclick="selectLeaveType('Paternity')">Paternity</div>
+                            <div class="option" onclick="selectLeaveType('Unpaid')">Unpaid</div>
+                        </div>
+                        <span class="arrow">&#9660;</span> <!-- Downward arrow -->
+                    </div>
+                    <div class="error-message" id="typeofleaveError">Please fill this field</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="empcontact" class="col-sm-2 col-form-label required-star">Mobile number</label>
+                <div class="col-sm-4">
+                    <input type="tel" name="empcontact" id="empcontact" class="form-control" placeholder="eg:- 9445822632" required>
+                    <div class="error-message" id="empcontactError">Please fill this field</div>
+                </div>
+                <label for="noofdays" class="col-sm-2 col-form-label required-star">Number of Days</label>
+                <div class="col-sm-4">
+                    <input type="number" name="noofdays" id="noofdays" class="form-control" placeholder="Number of Days" required>
+                    <div class="error-message" id="noofdaysError">Please fill this field</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="fromdate" class="col-sm-2 col-form-label required-star">Leave From</label>
+                <div class="col-sm-4">
+                    <input type="date" name="fromdate" id="fromdate" class="form-control" placeholder="Leave taken date" required>
+                    <div class="error-message" id="fromdateError">Please fill this field</div>
+                </div>
+                <label for="todate" class="col-sm-2 col-form-label required-star">Leave upto</label>
+                <div class="col-sm-4">
+                    <input type="date" name="todate" id="todate" class="form-control" placeholder="Leave taken uptodate" required>
+                    <div class="error-message" id="todateError">Please fill this field</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="submitteddate" class="col-sm-2 col-form-label required-star">Submitted Date</label>
+                <div class="col-sm-4">
+                    <input type="date" name="submitteddate" id="submitteddate" class="form-control" placeholder="Leave applied date" required>
+                    <div class="error-message" id="submitteddateError">Please fill this field</div>
+                </div>
+                <label for="attachfile" class="col-sm-2 col-form-label">Attach File (if any)</label>
+                <div class="col-sm-4">
+                    <input type="file" name="attachfile" id="attachfile" class="form-control" placeholder="File attachment">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="description" class="col-sm-2 col-form-label">Add more information</label>  
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description"></textarea>
+                </div>
+            </div>
+            <div class="center-bottom">
+                <button type="submit" name="reg" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-secondary" onclick="goToPreviousPage()">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        <span class="success-icon">&#10004;</span> Your records have been submitted successfully.
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        //------Drop down fields------//
+
+        function toggleLeaveOptions() {
+            var dropdown = document.getElementById("leaveTypeDropdown");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+        function selectLeaveType(leaveType) {
+            document.getElementById("leaveTypeInput").value = leaveType;
+            document.getElementById("leaveTypeDropdown").style.display = "none";
+        }
+
+        function toggledesignationOptions() {
+            var dropdown = document.getElementById("designationDropdown");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+        function selectdesignation(designation) {
+            document.getElementById("empdesignation").value = designation;
+            document.getElementById("designationDropdown").style.display = "none";
+        }
+        function toggledepartmentOptions() {
+            var dropdown = document.getElementById("departmentDropdown");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+        function selectdepartment(department) {
+            document.getElementById("empdepartment").value = department;
+            document.getElementById("departmentDropdown").style.display = "none";
+        }
+        
+        // -------------"The above is for dropdown fields----------------//"
+
+        function validateForm() {
+            var empId = document.forms["register"]["empid"].value;
+            var empName = document.forms["register"]["empname"].value;
+            var empLastName = document.forms["register"]["emplastname"].value;
+            var empDepartment = document.forms["register"]["empdepartment"].value;
+            var empDesignation = document.forms["register"]["empdesignation"].value;
+            var leaveType = document.forms["register"]["typeofleave"].value;
+            var empContact = document.forms["register"]["empcontact"].value;
+            var numOfDays = document.forms["register"]["noofdays"].value;
+            var fromdate = document.forms["register"]["fromdate"].value;
+            var todate = document.forms["register"]["todate"].value;
+            var submitteddate = document.forms["register"]["submitteddate"].value;
+            var isValid = true;
+            // Regular expression for 10-digit phone number with optional country code
+            var phoneRegex = /^\+?\d{0,3}\d{10}$/;
+
+            if (empId == "") {
+                document.getElementById("empidError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empidError").style.display = "none";
+            }
+
+            if (empName == "") {
+                document.getElementById("empnameError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empnameError").style.display = "none";
+            }
+            if (empLastName == "") {
+                document.getElementById("emplastnameError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("emplastnameError").style.display = "none";
+            }
+            if (empDepartment == "") {
+                document.getElementById("empdepartmentError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empdepartmentError").style.display = "none";
+            }
+            if (empDesignation == "") {
+                document.getElementById("empdesignationError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empdesignationError").style.display = "none";
+            }
+
+            if (leaveType == "") {
+                document.getElementById("typeofleaveError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("typeofleaveError").style.display = "none";
+            }
+            if (empContact == "") {
+                document.getElementById("empcontactError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empcontactError").style.display = "none";
+            }
+
+            if (numOfDays == "") {
+                document.getElementById("noofdaysError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("noofdaysError").style.display = "none";
+            }
+            if (fromdate == "") {
+                document.getElementById("fromdateError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("fromdateError").style.display = "none";
+            }
+            if (todate == "") {
+                document.getElementById("todateError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("todateError").style.display = "none";
+            }
+            if (submitteddate == "") {
+                document.getElementById("submitteddateError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("submitteddateError").style.display = "none";
+            }
+            if (!empContact.match(phoneRegex)) {
+                document.getElementById("empcontactError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("empcontactError").style.display = "none";
+            }
+
+            if (!isValid) {
+                return false;
+            }
+
+            // Show success message
+            document.getElementById("successMessage").style.display = "block";
+            setTimeout(function(){
+                document.getElementById("successMessage").style.display = "none";
+            }, 5000); // 5000 milliseconds = 5 seconds
+            return true;
+        }
+
+        function goToPreviousPage() {
+            window.location.href = "{% url 'employeehome' %}";
+        }
+    </script>
+</body>
+</html>

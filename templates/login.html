@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .fa {
+            margin-right: 5px; /* Add space between icon and text */
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif; 
+            background-size: 1600px;
+            background-position:center;
+            background-color: #669999;
+        }
+        .container {
+            width: 300px;
+            margin: 40px auto;
+            margin-left:500px; 
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.5); 
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .toggle {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .toggle input[type="radio"] {
+            display: none;
+        }
+        .toggle label {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #ccc;
+        }
+        .toggle input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .social-login, .create-account {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .social-login button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .social-login button.facebook {
+            background-color: #3b5998;
+            color: #fff;
+        }
+        .social-login button.google {
+            background-color: #ea4335;
+            color: #fff;
+        }
+        .error-message {
+            color: yellow;
+            font-size: smaller;
+            text-align: center;
+            margin-top: 30px ;
+        }
+        @media (max-width: 1024px) {
+            .container {
+                width: 90%;
+                margin: 50px auto;
+            }
+        }
+        
+        h2 {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: calc(100% - 20px); /* Set the width to 100% minus the padding */
+            padding: 10px;
+            margin: 10px auto; /* Center the input fields */
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .toggle {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .toggle input[type="radio"] {
+            display: none;
+        }
+        
+        .toggle label {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #ccc;
+        }
+        
+        .toggle input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        .social-login,
+        .create-account {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .social-login button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .social-login button.facebook {
+            background-color: #3b5998;
+            color: #fff;
+        }
+        
+        .social-login button.google {
+            background-color: #ea4335;
+            color: #fff;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: medium;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toggle">
+            <input type="radio" id="admin" name="loginType" value="admin" checked>
+            <label for="admin"><i class="fas fa-user-shield"></i>Admin</label>
+            <input type="radio" id="employee" name="loginType" value="employee">
+            <label for="employee"><i class="fas fa-user"></i>Employee</label>
+        </div>
+        <div id="adminLogin">
+            <h2><i class="fas fa-user-shield"></i><br>Admin Login</h2>
+            <form action="../loginpage/" onsubmit="return validateForm()" method="POST">
+                {% csrf_token %}
+                
+                <input type="text" name="admin_email" placeholder="Admin Email">
+                <input type="password" name="admin_password" placeholder="Password">
+                
+                <input type="submit" value="LOGIN">
+            </form>
+            {% for msg in messages %}
+            <div class="error-message">{{msg}}</div>
+            {% endfor %}
+        </div>
+        <div id="employeeLogin" style="display: none;">
+            <h2><i class="fas fa-user"></i><br>Employee Login</h2>
+            <form action="../emploginpage/" onsubmit="return validateForm()" method="post">
+                {% csrf_token %}
+                
+                <input type="text" name="employee_email" placeholder="Employee Email">
+                <input type="password" name="employee_password" placeholder="Password">
+                
+                <input type="submit" value="LOGIN">
+            </form>
+            {% for msg in messages %}
+            <div class="error-message">{{msg}}</div>
+            {% endfor %}
+        </div>
+
+        <div class="create-account" id="createAccount" style="margin-top: 20px;">
+            <a href="{% url 'register' %}"><h5 style="color: black;">Don't have an account? Click Here</h5></a>
+        </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const adminRadio = document.getElementById("admin");
+            const employeeRadio = document.getElementById("employee");
+            const adminLogin = document.getElementById("adminLogin");
+            const employeeLogin = document.getElementById("employeeLogin");
+            const socialLogin = document.getElementById("socialLogin");
+            const createAccount = document.getElementById("createAccount");
+
+            adminRadio.addEventListener("change", function() {
+                if (adminRadio.checked) {
+                    adminLogin.style.display = "block";
+                    employeeLogin.style.display = "none";
+                    socialLogin.style.display = "none";
+                    createAccount.style.display = "none";
+                }
+            });
+
+            employeeRadio.addEventListener("change", function() {
+                if (employeeRadio.checked) {
+                    adminLogin.style.display = "none";
+                    employeeLogin.style.display = "block";
+                    socialLogin.style.display = "none";
+                    createAccount.style.display = "none";
+                }
+            });
+
+            
+                });
+            
+        
+        
+    </script>
+</body>
+</html>

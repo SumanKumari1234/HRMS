@@ -1,0 +1,82 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Designation Module</title> 
+    <style> 
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f4; 
+        } 
+        .container { 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background-color: #fff; 
+            border-radius: 5px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        } 
+        h2 { 
+            text-align: center; 
+        } 
+        .form-group { 
+            margin-bottom: 20px; 
+        } 
+        label { 
+            font-weight: bold; 
+        } 
+        input[type="text"], textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        } 
+        button { 
+            display: block; 
+            width: 100%; 
+            padding: 10px; 
+            background-color: #669999; 
+            color: #fff; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: background-color 0.3s; 
+        } 
+        button:hover { 
+            background-color: #557777; 
+        } 
+        @media screen and (max-width: 1024px) { 
+            .container { 
+                width: 90%; 
+                margin: 30px auto; 
+            } 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div class="container"> 
+        <h2>Designation Details</h2> 
+        <form id="designation-form" method="post" action="../insertdesignation/"> 
+            {% csrf_token %} 
+            <div class="form-group"> 
+                <label for="designation-title">Designation Title:</label> 
+                <input type="text" id="designation-title" name="designation_title" required> 
+            </div> 
+            <div class="form-group"> 
+                <label for="designation-code">Designation Code:</label> 
+                <input type="text" id="designation-code" name="designation_code" required> 
+            </div> 
+            <div class="form-group"> 
+                <label for="designation-head">Designation Head:</label> 
+                <input type="text" id="designation-head" name="designation_head" required> 
+            </div> 
+            <div class="form-group"> 
+                <label for="designation-description">Designation Description:</label> 
+                <textarea id="designation-description" name="designation_description" rows="4" required></textarea> 
+            </div> 
+            <button type="submit">Submit</button> 
+        </form> 
+    </div> 
+</body> 
+</html>
